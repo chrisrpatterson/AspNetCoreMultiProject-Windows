@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  api:
+    image: api:dev
+    build:
+      args:
+        source: ${DOCKER_BUILD_SOURCE}
+    environment:
+      - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - NUGET_PACKAGES=C:\.nuget\packages
+    volumes:
+      - ./Api:C:\app
+      - ${NUGET_PACKAGES}:C:\.nuget\packages:ro
+      - ${VS_REMOTE_DEBUGGER_ONECORE_PATH}:C:\remote_debugger:ro
+    entrypoint: powershell -Command [System.Threading.Thread]::Sleep([System.Threading.Timeout]::Infinite)
+    labels:
+      - "com.microsoft.visualstudio.targetoperatingsystem=windows"
+      - "com.microsoft.visualstudio.targetframework=dotnetcore"
+
+  web:
+    image: web:dev
+    build:
+      args:
+        source: ${DOCKER_BUILD_SOURCE}
+    environment:
+      - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - NUGET_PACKAGES=C:\.nuget\packages
+    volumes:
+      - ./Web:C:\app
+      - ${NUGET_PACKAGES}:C:\.nuget\packages:ro
+      - ${VS_REMOTE_DEBUGGER_ONECORE_PATH}:C:\remote_debugger:ro
+    entrypoint: powershell -Command [System.Threading.Thread]::Sleep([System.Threading.Timeout]::Infinite)
+    labels:
+      - "com.microsoft.visualstudio.targetoperatingsystem=windows"
+      - "com.microsoft.visualstudio.targetframework=dotnetcore"
